@@ -104,8 +104,11 @@ def create_vscode_workspace(wd_name):
         json.dump(workspace_data, f, indent=4)
     print(f"Created VS Code workspace file: {workspace_file}")
 
+    return workspace_file
+
 
 def main():
+    print("===Setup Camp===")
     parser = argparse.ArgumentParser(description="Setup workspace with cloned Git repository")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--org", help="GitHub organization name")
@@ -116,7 +119,10 @@ def main():
     args = parser.parse_args()
 
     if args.org and not args.repo:
-        parser.error("--repo is required when using --org")
+        print("error: --repo is required when using --org")
+        print("Here's a list of repositories associated with that organization/user: ")
+        subprocess.run(["gh", "repo", "list", args.org], check=True)
+        sys.exit(1)
 
     if args.org:
         org, repo_name, repo_url = parse_repo_info(args.org, args.repo)
@@ -137,10 +143,24 @@ def main():
     create_symlink(repo_name)
 
     # Create VS Code workspace
-    create_vscode_workspace(wd_name)
+    workspace_file_name = create_vscode_workspace(wd_name)
 
     print("Setup complete!")
+    print("Would you like to open your new workspace in VS Code?")
+    
+    response = input("Would you like to open your new workspace in VS Code? (Y/n): ").strip().lower()
+    if response == 'y':
+        print(f"Opening {workspace_file_name} in VS Code...")
+        try:
+            subprocess.run(["code", workspace_file_name], check=True)
+            print(f"Workspace {workspace_file_name} opened.")
+        except subprocess.CalledProcessError as e:
+            print(f"Error opening workspace: {e}")
+            print("Skipping VS Code launch.")
+    else:
+        print("Skipping VS Code launch.")
 
+    print("Happy Coding!")
 
 if __name__ == "__main__":
     main()
