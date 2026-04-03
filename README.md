@@ -12,6 +12,8 @@ Be sure to do your usual chmod shenanigans.
 To call from anywhere in your shell, add this repo's folder to your system PATH, relaunch your shell, and run `setup-camp`, `setup-camp.bat` or `python setup-camp.py`
 The first two internally call `python setup-camp.py` in some fashion.
 
-Usage:
-    python setup_repo.py --org <org> --repo <repo>
-    python setup_repo.py --url <full_git_url>
+## Usage Example:
+
+`python setup_repo.py --org <org> --repo <repo>`
+
+`python setup_repo.py --url <full_git_url>`
